@@ -3,10 +3,7 @@ package com.eleks.academy.pharmagator.entities;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.Instant;
 
@@ -17,9 +14,9 @@ import java.time.Instant;
 @IdClass(PriceId.class)
 public class Price {
     @Id
-    private long pharmacyId;
+    private Long pharmacyId;
     @Id
-    private long medicineId;
+    private Long medicineId;
     private BigDecimal price;
     private String externalId;
     private Instant updatedAt;

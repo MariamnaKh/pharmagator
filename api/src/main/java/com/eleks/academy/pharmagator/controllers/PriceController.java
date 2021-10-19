@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/price")
+@RequestMapping("/prices")
 public class PriceController {
     private final PriceRepository priceRepository;
 
@@ -23,7 +23,7 @@ public class PriceController {
         return ResponseEntity.ok(priceRepository.findAll());
     }
 
-    @GetMapping("/get/{pharmacyId}/{medicineId}")
+    @GetMapping("pharmacies/{pharmacyId}/medicines/{medicineId}")
     public ResponseEntity<Price> getById(@PathVariable Long pharmacyId,
                                          @PathVariable Long medicineId) {
         Optional<Price> findById = priceRepository.findById(new PriceId(pharmacyId, medicineId));
@@ -33,7 +33,7 @@ public class PriceController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @DeleteMapping("/delete/{pharmacyId}/{medicineId}")
+    @DeleteMapping("/pharmacies/{pharmacyId}/medicines/{medicineId}")
     public ResponseEntity<Price> deletePrice(@PathVariable Long pharmacyId,
                                              @PathVariable Long medicineId) {
         PriceId price = new PriceId(pharmacyId, medicineId);
@@ -45,19 +45,23 @@ public class PriceController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<Price> createPrice(@RequestBody Price price) {
         priceRepository.save(price);
         return new ResponseEntity<>(price, HttpStatus.OK);
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<Price> updatePrice(@RequestBody Price price) {
+    @PutMapping("pharmacies/{pharmacyId}/medicines/{medicineId}")
+    public ResponseEntity<Price> updatePrice(@PathVariable Long pharmacyId,
+                                             @PathVariable Long medicineId,
+                                             @RequestBody Price price) {
         Optional<Price> findById = priceRepository.findByPharmacyIdAndMedicineId(price.getPharmacyId(),
                 price.getMedicineId());
         if (!findById.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        price.setPharmacyId(pharmacyId);
+        price.setMedicineId(medicineId);
         priceRepository.save(price);
         return new ResponseEntity<>(price, HttpStatus.OK);
     }

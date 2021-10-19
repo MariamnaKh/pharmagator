@@ -6,3 +6,11 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
+
+pharmagator:
+  data-providers:
+    apteka-rozetka:
+      url: https://xl-catalog-api.rozetka.com.ua/v4
+      category-fetch-url: /categories/getChildren?category_id=4628621
+      medicines-fetch-url: /goods/getDetails
+      ids-fetch-url: /goods/get

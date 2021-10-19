@@ -22,26 +22,26 @@ public class PharmacyController {
         return ResponseEntity.ok(pharmacyRepository.findAll());
     }
 
-    @GetMapping("/get/{id}")
-    public ResponseEntity<Pharmacy> getById(@PathVariable("id") Long pharmacyId) {
-        Optional<Pharmacy> findById = pharmacyRepository.findById(pharmacyId);
+    @GetMapping("/{id}")
+    public ResponseEntity<Pharmacy> getById(@PathVariable("id") Long id) {
+        Optional<Pharmacy> findById = pharmacyRepository.findById(id);
         if (findById.isPresent()) {
             return new ResponseEntity<>(findById.get(), HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Pharmacy> deletePharmacy(@PathVariable("id") Long pharmacyId) {
-        Optional<Pharmacy> findById = pharmacyRepository.findById(pharmacyId);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Pharmacy> deletePharmacy(@PathVariable("id") Long id) {
+        Optional<Pharmacy> findById = pharmacyRepository.findById(id);
         if (findById.isPresent()) {
-            pharmacyRepository.deleteById(pharmacyId);
+            pharmacyRepository.deleteById(id);
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<Pharmacy> createPharmacy(@RequestBody Pharmacy pharmacy) {
         Optional<Pharmacy> findById = pharmacyRepository.findById(pharmacy.getId());
         if (findById.isPresent()) {
@@ -51,12 +51,14 @@ public class PharmacyController {
         return new ResponseEntity<>(pharmacy, HttpStatus.OK);
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<Pharmacy> updatePharmacy(@RequestBody Pharmacy pharmacy) {
+    @PutMapping("/{id}")
+    public ResponseEntity<Pharmacy> updatePharmacy(@PathVariable("id") Long id,
+                                                   @RequestBody Pharmacy pharmacy) {
         Optional<Pharmacy> findById = pharmacyRepository.findById(pharmacy.getId());
         if (!findById.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        pharmacy.setId(id);
         pharmacyRepository.save(pharmacy);
         return new ResponseEntity<>(pharmacy, HttpStatus.OK);
     }

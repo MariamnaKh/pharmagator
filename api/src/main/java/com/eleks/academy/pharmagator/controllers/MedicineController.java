@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/medicine")
+@RequestMapping("/medicines")
 public class MedicineController {
     private final MedicineRepository medicineRepository;
 
@@ -22,41 +22,39 @@ public class MedicineController {
         return ResponseEntity.ok(medicineRepository.findAll());
     }
 
-    @GetMapping("/get/{id}")
-    public ResponseEntity<Medicine> getById(@PathVariable("id") Long medicineId) {
-        Optional<Medicine> findById = medicineRepository.findById(medicineId);
+    @GetMapping("/{id}")
+    public ResponseEntity<Medicine> getById(@PathVariable("id") Long id) {
+        Optional<Medicine> findById = medicineRepository.findById(id);
         if (findById.isPresent()) {
             return new ResponseEntity<>(findById.get(), HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Medicine> deleteMedicine(@PathVariable("id") Long medicineId) {
-        Optional<Medicine> findById = medicineRepository.findById(medicineId);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Medicine> deleteMedicine(@PathVariable("id") Long id) {
+        Optional<Medicine> findById = medicineRepository.findById(id);
         if (findById.isPresent()) {
-            medicineRepository.deleteById(medicineId);
+            medicineRepository.deleteById(id);
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<Medicine> createMedicine(@RequestBody Medicine medicine) {
-        Optional<Medicine> findById = medicineRepository.findById(medicine.getId());
-        if (findById.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
         medicineRepository.save(medicine);
         return new ResponseEntity<>(medicine, HttpStatus.OK);
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<Medicine> updateMedicine(@RequestBody Medicine medicine) {
-        Optional<Medicine> findByTitle = medicineRepository.findById(medicine.getId());
-        if (!findByTitle.isPresent()) {
+    @PutMapping("/{id}")
+    public ResponseEntity<Medicine> updateMedicine(@PathVariable("id") Long id,
+                                                   @RequestBody Medicine medicine) {
+        Optional<Medicine> findById = medicineRepository.findById(medicine.getId());
+        if (!findById.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        medicine.setId(id);
         medicineRepository.save(medicine);
         return new ResponseEntity<>(HttpStatus.OK);
     }
