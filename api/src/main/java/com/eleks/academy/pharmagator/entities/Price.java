@@ -3,7 +3,10 @@ package com.eleks.academy.pharmagator.entities;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.time.Instant;
 

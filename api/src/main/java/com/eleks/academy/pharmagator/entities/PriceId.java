@@ -2,8 +2,6 @@ package com.eleks.academy.pharmagator.entities;
 
 import lombok.*;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import java.io.Serializable;
 
 @Getter
