@@ -4,11 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class RozetkaMedicinesResponse {
-    private List<RozetkaMedicineDto> data;
+@NoArgsConstructor
+public class RozetkaIdsResponse {
+    private RozetkaIdsResponseData data;
 }
