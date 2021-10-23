@@ -1,68 +1,53 @@
 package com.eleks.academy.pharmagator.controllers;
 
-import com.eleks.academy.pharmagator.entities.Price;
-import com.eleks.academy.pharmagator.entities.PriceId;
-import com.eleks.academy.pharmagator.repositories.PriceRepository;
+import com.eleks.academy.pharmagator.dto.PriceDto;
+import com.eleks.academy.pharmagator.services.PriceService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/prices")
 public class PriceController {
-    private final PriceRepository priceRepository;
+    private final PriceService priceService;
 
     @GetMapping
-    public ResponseEntity<List<Price>> getAll() {
-        return ResponseEntity.ok(priceRepository.findAll());
+    public List<PriceDto> getAll() {
+
+        return priceService.getAll();
+
     }
 
     @GetMapping("pharmacies/{pharmacyId}/medicines/{medicineId}")
-    public ResponseEntity<Price> getById(@PathVariable Long pharmacyId,
+    public PriceDto getById(@PathVariable Long pharmacyId,
                                          @PathVariable Long medicineId) {
-        Optional<Price> findById = priceRepository.findById(new PriceId(pharmacyId, medicineId));
-        if (findById.isPresent()) {
-            return new ResponseEntity<>(findById.get(), HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        return priceService.getById(pharmacyId, medicineId);
+
     }
 
     @DeleteMapping("/pharmacies/{pharmacyId}/medicines/{medicineId}")
-    public ResponseEntity<Price> deletePrice(@PathVariable Long pharmacyId,
+    public void deletePrice(@PathVariable Long pharmacyId,
                                              @PathVariable Long medicineId) {
-        PriceId price = new PriceId(pharmacyId, medicineId);
-        Optional<Price> findById = priceRepository.findById(price);
-        if (findById.isPresent()) {
-            priceRepository.deleteById(price);
-            return new ResponseEntity<>(HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        priceService.deletePrice(pharmacyId, medicineId);
+
     }
 
     @PostMapping
-    public ResponseEntity<Price> createPrice(@RequestBody Price price) {
-        priceRepository.save(price);
-        return new ResponseEntity<>(price, HttpStatus.OK);
+    public PriceDto createPrice(@RequestBody PriceDto price) {
+
+        return priceService.createPrice(price);
     }
 
     @PutMapping("pharmacies/{pharmacyId}/medicines/{medicineId}")
-    public ResponseEntity<Price> updatePrice(@PathVariable Long pharmacyId,
+    public PriceDto updatePrice(@PathVariable Long pharmacyId,
                                              @PathVariable Long medicineId,
-                                             @RequestBody Price price) {
-        Optional<Price> findById = priceRepository.findByPharmacyIdAndMedicineId(price.getPharmacyId(),
-                price.getMedicineId());
-        if (!findById.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        price.setPharmacyId(pharmacyId);
-        price.setMedicineId(medicineId);
-        priceRepository.save(price);
-        return new ResponseEntity<>(price, HttpStatus.OK);
+                                             @RequestBody PriceDto price) {
+
+        return priceService.updatePrice(pharmacyId, medicineId, price);
+        
     }
 }

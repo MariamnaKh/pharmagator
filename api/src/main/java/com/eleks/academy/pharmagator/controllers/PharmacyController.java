@@ -1,65 +1,51 @@
 package com.eleks.academy.pharmagator.controllers;
 
-import com.eleks.academy.pharmagator.entities.Pharmacy;
-import com.eleks.academy.pharmagator.repositories.PharmacyRepository;
+import com.eleks.academy.pharmagator.dto.PharmacyDto;
+import com.eleks.academy.pharmagator.services.PharmacyService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/pharmacies")
 public class PharmacyController {
-    private final PharmacyRepository pharmacyRepository;
+    private final PharmacyService pharmacyService;
 
     @GetMapping
-    public ResponseEntity<List<Pharmacy>> getAll() {
-        return ResponseEntity.ok(pharmacyRepository.findAll());
+    public List<PharmacyDto> getAll() {
+
+        return pharmacyService.getAll();
+
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Pharmacy> getById(@PathVariable("id") Long id) {
-        Optional<Pharmacy> findById = pharmacyRepository.findById(id);
-        if (findById.isPresent()) {
-            return new ResponseEntity<>(findById.get(), HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public PharmacyDto getById(@PathVariable("id") Long id) {
+
+        return pharmacyService.getById(id);
+
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Pharmacy> deletePharmacy(@PathVariable("id") Long id) {
-        Optional<Pharmacy> findById = pharmacyRepository.findById(id);
-        if (findById.isPresent()) {
-            pharmacyRepository.deleteById(id);
-            return new ResponseEntity<>(HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public void deletePharmacy(@PathVariable("id") Long id) {
+
+        pharmacyService.deletePharmacy(id);
+
     }
 
     @PostMapping
-    public ResponseEntity<Pharmacy> createPharmacy(@RequestBody Pharmacy pharmacy) {
-        Optional<Pharmacy> findById = pharmacyRepository.findById(pharmacy.getId());
-        if (findById.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
-        pharmacyRepository.save(pharmacy);
-        return new ResponseEntity<>(pharmacy, HttpStatus.OK);
+    public PharmacyDto createPharmacy(@RequestBody PharmacyDto pharmacy) {
+
+        return pharmacyService.createPharmacy(pharmacy);
+
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Pharmacy> updatePharmacy(@PathVariable("id") Long id,
-                                                   @RequestBody Pharmacy pharmacy) {
-        Optional<Pharmacy> findById = pharmacyRepository.findById(pharmacy.getId());
-        if (!findById.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        pharmacy.setId(id);
-        pharmacyRepository.save(pharmacy);
-        return new ResponseEntity<>(pharmacy, HttpStatus.OK);
+    public PharmacyDto updatePharmacy(@PathVariable("id") Long id,
+                                                   @RequestBody PharmacyDto pharmacy) {
+
+        return pharmacyService.updatePharmacy(id, pharmacy);
+
     }
 }
