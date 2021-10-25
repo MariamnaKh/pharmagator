@@ -37,7 +37,7 @@ public class MedicineRepositoryTest {
     public void givenMedicineToAdd_ShouldReturnAddedMedicine(){
         medicineRepository.save(medicine);
         Medicine fetchedMedicine = medicineRepository.findById(medicine.getId()).get();
-        assertEquals(1, fetchedMedicine.getId());
+        assertEquals(1L, fetchedMedicine.getId());
     }
 
     @Test
