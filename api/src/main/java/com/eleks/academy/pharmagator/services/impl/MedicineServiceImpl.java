@@ -18,12 +18,11 @@ import java.util.Optional;
 public class MedicineServiceImpl implements MedicineService {
 
     private final MedicineRepository medicineRepository;
-    private final MedicineDtoMapper medicineMapper;
 
     @Override
     public List<MedicineDto> findAll() {
 
-        return medicineMapper.toMedicineDto(medicineRepository.findAll());
+        return MedicineDtoMapper.toMedicineDto(medicineRepository.findAll());
 
     }
 
@@ -34,7 +33,7 @@ public class MedicineServiceImpl implements MedicineService {
         if(medicine.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        return medicineMapper.toMedicineDto(medicine.get());
+        return MedicineDtoMapper.toMedicineDto(medicine.get());
 
     }
 
@@ -52,7 +51,7 @@ public class MedicineServiceImpl implements MedicineService {
     @Override
     public MedicineDto createMedicine(MedicineDto medicine) {
 
-        return medicineMapper.toMedicineDto(medicineRepository.save(medicineMapper.toMedicineEntity(medicine)));
+        return MedicineDtoMapper.toMedicineDto(medicineRepository.save(MedicineDtoMapper.toMedicineEntity(medicine)));
 
     }
 
@@ -65,7 +64,7 @@ public class MedicineServiceImpl implements MedicineService {
         }
         Medicine tmp = medicine.get();
         tmp.setTitle(medicineDto.getTitle());
-        return medicineMapper.toMedicineDto(medicineRepository.save(tmp));
+        return MedicineDtoMapper.toMedicineDto(medicineRepository.save(tmp));
 
     }
 

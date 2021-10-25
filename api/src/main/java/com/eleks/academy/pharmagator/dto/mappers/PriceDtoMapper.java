@@ -2,15 +2,13 @@ package com.eleks.academy.pharmagator.dto.mappers;
 
 import com.eleks.academy.pharmagator.dto.PriceDto;
 import com.eleks.academy.pharmagator.entities.Price;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
 public class PriceDtoMapper {
 
-    public Price toPriceEntity(PriceDto dto) {
+    public static Price toPriceEntity(PriceDto dto) {
 
         Price price = new Price();
         price.setPrice(dto.getPrice());
@@ -20,7 +18,11 @@ public class PriceDtoMapper {
 
     }
 
-    public PriceDto toPriceDto(Price price) {
+    public static List<Price> toPriceEntity(List<PriceDto> dto) {
+        return dto.stream().map(PriceDtoMapper::toPriceEntity).collect(Collectors.toList());
+    }
+
+    public static PriceDto toPriceDto(Price price) {
 
         PriceDto priceDto = new PriceDto();
         priceDto.setPrice(price.getPrice());
@@ -32,9 +34,9 @@ public class PriceDtoMapper {
 
     }
 
-    public List<PriceDto> toPriceDto(List<Price> priceList) {
+    public static List<PriceDto> toPriceDto(List<Price> priceList) {
 
-        return priceList.stream().map(this::toPriceDto).collect(Collectors.toList());
+        return priceList.stream().map(PriceDtoMapper::toPriceDto).collect(Collectors.toList());
 
     }
 

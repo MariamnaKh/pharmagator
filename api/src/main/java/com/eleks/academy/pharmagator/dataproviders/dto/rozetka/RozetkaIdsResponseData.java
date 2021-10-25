@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RozetkaIdsResponseData {
-    List<Long> ids;
+    private List<Long> ids;
     @JsonProperty("show_next")
-    int showNext;
+    private int showNext;
 }

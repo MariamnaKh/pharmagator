@@ -19,13 +19,12 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PriceServiceImpl implements PriceService {
 
-    private final PriceDtoMapper priceMapper;
     private final PriceRepository priceRepository;
 
     @Override
     public List<PriceDto> getAll() {
 
-        return priceMapper.toPriceDto(priceRepository.findAll());
+        return PriceDtoMapper.toPriceDto(priceRepository.findAll());
 
     }
 
@@ -36,7 +35,7 @@ public class PriceServiceImpl implements PriceService {
         if(price.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        return priceMapper.toPriceDto(price.get());
+        return PriceDtoMapper.toPriceDto(price.get());
 
     }
 
@@ -54,7 +53,7 @@ public class PriceServiceImpl implements PriceService {
     @Override
     public PriceDto createPrice(PriceDto price) {
 
-        return priceMapper.toPriceDto(priceRepository.save(priceMapper.toPriceEntity(price)));
+        return PriceDtoMapper.toPriceDto(priceRepository.save(PriceDtoMapper.toPriceEntity(price)));
 
     }
 
@@ -69,7 +68,7 @@ public class PriceServiceImpl implements PriceService {
         tmp.setPrice(priceDto.getPrice());
         tmp.setUpdatedAt(Instant.now());
         tmp.setExternalId(priceDto.getExternalId());
-        return priceMapper.toPriceDto(priceRepository.save(tmp));
+        return PriceDtoMapper.toPriceDto(priceRepository.save(tmp));
 
     }
 }

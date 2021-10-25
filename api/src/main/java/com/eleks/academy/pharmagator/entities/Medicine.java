@@ -1,13 +1,13 @@
 package com.eleks.academy.pharmagator.entities;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "medicines")
 public class Medicine {
     @Id

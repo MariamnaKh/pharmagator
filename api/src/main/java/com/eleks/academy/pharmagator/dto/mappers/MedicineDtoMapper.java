@@ -2,15 +2,13 @@ package com.eleks.academy.pharmagator.dto.mappers;
 
 import com.eleks.academy.pharmagator.dto.MedicineDto;
 import com.eleks.academy.pharmagator.entities.Medicine;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
 public class MedicineDtoMapper {
 
-    public Medicine toMedicineEntity(MedicineDto dto) {
+    public static Medicine toMedicineEntity(MedicineDto dto) {
 
         Medicine medicine = new Medicine();
         medicine.setTitle(dto.getTitle());
@@ -18,7 +16,11 @@ public class MedicineDtoMapper {
 
     }
 
-    public MedicineDto toMedicineDto(Medicine medicine) {
+    public static List<Medicine> toMedicineEntity(List<MedicineDto> medicineDtoList) {
+        return medicineDtoList.stream().map(MedicineDtoMapper::toMedicineEntity).collect(Collectors.toList());
+    }
+
+    public static MedicineDto toMedicineDto(Medicine medicine) {
 
         MedicineDto medicineDto = new MedicineDto();
         medicineDto.setId(medicine.getId());
@@ -27,9 +29,9 @@ public class MedicineDtoMapper {
 
     }
 
-    public List<MedicineDto> toMedicineDto(List<Medicine> medicineList) {
+    public static List<MedicineDto> toMedicineDto(List<Medicine> medicineList) {
 
-        return medicineList.stream().map(this::toMedicineDto).collect(Collectors.toList());
+        return medicineList.stream().map(MedicineDtoMapper::toMedicineDto).collect(Collectors.toList());
 
     }
 

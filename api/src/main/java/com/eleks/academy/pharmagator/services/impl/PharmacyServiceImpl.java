@@ -18,13 +18,12 @@ import java.util.Optional;
 public class PharmacyServiceImpl implements PharmacyService {
 
     private final PharmacyRepository pharmacyRepository;
-    private final PharmacyDtoMapper pharmacyMapper;
 
 
     @Override
     public List<PharmacyDto> getAll() {
 
-        return pharmacyMapper.toPharmacyDto(pharmacyRepository.findAll());
+        return PharmacyDtoMapper.toPharmacyDto(pharmacyRepository.findAll());
 
     }
 
@@ -35,7 +34,7 @@ public class PharmacyServiceImpl implements PharmacyService {
         if(pharmacy.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        return pharmacyMapper.toPharmacyDto(pharmacy.get());
+        return PharmacyDtoMapper.toPharmacyDto(pharmacy.get());
 
     }
 
@@ -53,8 +52,8 @@ public class PharmacyServiceImpl implements PharmacyService {
     @Override
     public PharmacyDto createPharmacy(PharmacyDto pharmacy) {
 
-        return pharmacyMapper.toPharmacyDto(pharmacyRepository
-                .save(pharmacyMapper.toPharmacyEntity(pharmacy)));
+        return PharmacyDtoMapper.toPharmacyDto(pharmacyRepository
+                .save(PharmacyDtoMapper.toPharmacyEntity(pharmacy)));
 
     }
 
@@ -68,7 +67,7 @@ public class PharmacyServiceImpl implements PharmacyService {
         Pharmacy tmp = pharmacy.get();
         tmp.setName(pharmacyDto.getName());
         tmp.setMedicineLinkTemplate(pharmacyDto.getMedicineLinkTemplate());
-        return pharmacyMapper.toPharmacyDto(pharmacyRepository.save(tmp));
+        return PharmacyDtoMapper.toPharmacyDto(pharmacyRepository.save(tmp));
 
     }
 
