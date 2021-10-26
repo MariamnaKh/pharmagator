@@ -9,10 +9,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,6 +26,7 @@ public class MedicineRepositoryTest {
     public void setUp() {
         medicine = new Medicine(1L, "Paracetamol");
     }
+
     @AfterEach
     public void tearDown() {
         medicineRepository.deleteAll();
@@ -34,34 +34,15 @@ public class MedicineRepositoryTest {
     }
 
     @Test
-    public void givenMedicineToAdd_ShouldReturnAddedMedicine(){
+    public void givenMedicineToFind_FindByTitle() {
         medicineRepository.save(medicine);
-        Medicine fetchedMedicine = medicineRepository.findById(medicine.getId()).get();
-        assertEquals(1L, fetchedMedicine.getId());
+        Optional<Medicine> expected = medicineRepository.findByTitle(medicine.getTitle());
+        assertThat(expected).isNotEmpty();
     }
 
     @Test
-    public void GivenGetAllMedicines_ShouldReturnListOfAllMedicines(){
-        Medicine medicine1 = new Medicine(1L,"Ibuprofen");
-        Medicine medicine2 = new Medicine(2L,"Valerian root");
-        medicineRepository.save(medicine1);
-        medicineRepository.save(medicine2);
-        List<Medicine> productList = (List<Medicine>) medicineRepository.findAll();
-        assertEquals("Valerian root", productList.get(1).getTitle());
-    }
-
-    @Test
-    public void givenId_ShouldReturnMedicineOfThatId() {
-        Medicine medicine1 = new Medicine(1L,"Ibuprofen");
-        Medicine medicine2 = medicineRepository.save(medicine1);
-        Optional<Medicine> optional =  medicineRepository.findById(medicine2.getId());
-        assertEquals(medicine2.getId(), optional.get().getId());
-        assertEquals(medicine2.getTitle(), optional.get().getTitle());
-    }
-
-    @Test
-    public void givenNonExistingId_ShouldReturnEmptyOptional() {
-        Optional<Medicine> medicineOptional= medicineRepository.findById(1500L);
+    public void givenNonExistingTitle_ShouldReturnEmptyOptional() {
+        Optional<Medicine> medicineOptional= medicineRepository.findByTitle("Vitamin D");
         assertTrue(medicineOptional.isEmpty());
     }
 
