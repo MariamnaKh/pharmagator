@@ -4,6 +4,9 @@ import com.eleks.academy.pharmagator.dto.PharmacyDto;
 import com.eleks.academy.pharmagator.services.PharmacyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -11,6 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/pharmacies")
 public class PharmacyController {
+
     private final PharmacyService pharmacyService;
 
     @GetMapping
@@ -46,6 +50,6 @@ public class PharmacyController {
                                                    @RequestBody PharmacyDto pharmacy) {
 
         return pharmacyService.updatePharmacy(id, pharmacy);
-
     }
+
 }
