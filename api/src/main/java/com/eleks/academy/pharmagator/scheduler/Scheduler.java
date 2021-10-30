@@ -1,6 +1,7 @@
 package com.eleks.academy.pharmagator.scheduler;
 
 import com.eleks.academy.pharmagator.dataproviders.DataProvider;
+import com.eleks.academy.pharmagator.dataproviders.PharmacyRozetkaDataProvider;
 import com.eleks.academy.pharmagator.dataproviders.dto.MedicineDto;
 import com.eleks.academy.pharmagator.entities.Medicine;
 import com.eleks.academy.pharmagator.entities.Pharmacy;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -26,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 @Profile("!test")
 public class Scheduler {
 
-    private final List<DataProvider> dataProviderList;
+    private final List<PharmacyRozetkaDataProvider> dataProviderList;
     private final MedicineRepository medicineRepository;
     private final PriceRepository priceRepository;
     private static final Long ROZETKA = 2L;
@@ -56,6 +58,7 @@ public class Scheduler {
         price.setPharmacyId(ROZETKA);
         price.setExternalId(dto.getExternalId());
         price.setPrice(dto.getPrice());
+        price.setUpdatedAt(Instant.now());
         priceRepository.save(price);*/
 
         Medicine medicine = MedicineMapper.toMedicineEntity(dto);
