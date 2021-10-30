@@ -7,6 +7,7 @@ spring:
     hibernate:
       ddl-auto: validate
 
+
 pharmagator:
   data-providers:
     apteka-rozetka:
@@ -15,4 +16,8 @@ pharmagator:
       ids-fetch-url: /get
       category-id: 4628621
       sell-status: available
+    apteka-ds:
+      url: https://api-int.apteka-ds.com.ua/api/v1
+      category-fetch-url: /category-menu
+      category-path: /cat-prods-by-page
 

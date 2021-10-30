@@ -9,6 +9,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 public class DataProvidersConfig {
+
     @Value("${pharmagator.data-providers.apteka-rozetka.url}")
     private String pharmacyRozetkaBaseUrl;
 
@@ -18,6 +19,18 @@ public class DataProvidersConfig {
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                 .baseUrl(pharmacyRozetkaBaseUrl)
+                .build();
+    }
+
+    @Value("${pharmagator.data-providers.apteka-ds.url}")
+    private String pharmacyDSBaseUrl;
+
+    @Bean(name = "pharmacyDSWebClient")
+    public WebClient pharmacyDSWebClient() {
+        return WebClient.builder()
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+                .baseUrl(pharmacyDSBaseUrl)
                 .build();
     }
 }

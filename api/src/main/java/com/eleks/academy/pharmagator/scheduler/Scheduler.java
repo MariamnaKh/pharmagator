@@ -19,21 +19,24 @@ import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.util.List;
+
 import java.util.Optional;
+
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
-@RequiredArgsConstructor
 @Component
 @Profile("!test")
+@RequiredArgsConstructor
 public class Scheduler {
 
-    private final List<PharmacyRozetkaDataProvider> dataProviderList;
+    private final List<DataProvider> dataProviderList;
     private final MedicineRepository medicineRepository;
     private final PriceRepository priceRepository;
     private static final Long ROZETKA = 2L;
 
     @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.MINUTES)
+
     public void schedule() {
 
         log.info("Scheduler started at {}", Instant.now());
@@ -42,8 +45,8 @@ public class Scheduler {
     }
 
     private void storeToDatabase(MedicineDto dto) {
-
         // TODO: convert DTO to Entity and store to database
+        log.info(dto.getTitle() + " - " + dto.getPrice());
         /*Optional<Medicine> ifMedicineExists = medicineRepository.findByTitle(dto.getTitle());
         Medicine medicine = null;
         if (ifMedicineExists.isPresent()) {
@@ -65,4 +68,5 @@ public class Scheduler {
         Price price = PriceMapper.toPriceEntity(dto);
 
     }
+
 }
