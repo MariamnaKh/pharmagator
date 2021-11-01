@@ -5,7 +5,6 @@ import com.eleks.academy.pharmagator.dataproviders.dto.ds.CategoryDto;
 import com.eleks.academy.pharmagator.dataproviders.dto.ds.DSMedicineDto;
 import com.eleks.academy.pharmagator.dataproviders.dto.ds.DSMedicinesResponse;
 import com.eleks.academy.pharmagator.dataproviders.dto.ds.FilterRequest;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -19,7 +18,6 @@ import java.util.List;
 import java.util.stream.Stream;
 
 @Service
-@RequiredArgsConstructor
 @Qualifier("pharmacyDSDataProvider")
 public class PharmacyDSDataProvider implements DataProvider {
 
@@ -30,6 +28,12 @@ public class PharmacyDSDataProvider implements DataProvider {
 
     @Value("${pharmagator.data-providers.apteka-ds.category-path}")
     private String categoryPath;
+
+    public PharmacyDSDataProvider(@Qualifier("pharmacyDSWebClient") WebClient dsClient) {
+
+        this.dsClient = dsClient;
+
+    }
 
     @Override
     public Stream<MedicineDto> loadData() {

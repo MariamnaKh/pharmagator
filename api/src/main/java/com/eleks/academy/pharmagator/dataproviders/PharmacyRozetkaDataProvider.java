@@ -1,8 +1,11 @@
 package com.eleks.academy.pharmagator.dataproviders;
 
 import com.eleks.academy.pharmagator.dataproviders.dto.MedicineDto;
-import com.eleks.academy.pharmagator.dataproviders.dto.rozetka.*;
-import lombok.RequiredArgsConstructor;
+import com.eleks.academy.pharmagator.dataproviders.dto.rozetka.RozetkaIdsResponse;
+import com.eleks.academy.pharmagator.dataproviders.dto.rozetka.RozetkaIdsResponseData;
+import com.eleks.academy.pharmagator.dataproviders.dto.rozetka.RozetkaMedicineDto;
+import com.eleks.academy.pharmagator.dataproviders.dto.rozetka.RozetkaMedicinesResponse;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -12,7 +15,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
-@RequiredArgsConstructor
 public class PharmacyRozetkaDataProvider implements DataProvider {
 
     private final WebClient rozetkaWebClient;
@@ -29,12 +31,19 @@ public class PharmacyRozetkaDataProvider implements DataProvider {
     @Value("${pharmagator.data-providers.apteka-rozetka.sell-status}")
     private String sellStatus;
 
-   @Override
+    public PharmacyRozetkaDataProvider(@Qualifier("pharmacyRozetkaWebClient") WebClient rozetkaWebClient) {
+
+        this.rozetkaWebClient = rozetkaWebClient;
+
+    }
+
+    @Override
     public Stream<MedicineDto> loadData() {
 
         RozetkaIdsResponseData rozetkaResponse;
         Stream<MedicineDto> medicineDto = Stream.of();
         int page = 1;
+
         do {
             rozetkaResponse = this.fetchMedicineIds(page);
             medicineDto = Stream.concat(medicineDto, this.fetchMedicines(rozetkaResponse.getIds()));
