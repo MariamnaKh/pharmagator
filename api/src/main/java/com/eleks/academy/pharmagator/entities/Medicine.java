@@ -1,6 +1,9 @@
 package com.eleks.academy.pharmagator.entities;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 
 @Data
@@ -13,6 +16,14 @@ public class Medicine {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private String title;
+
+    public Medicine(String title) {
+
+        this.title = title;
+
+    }
 
 }
