@@ -3,6 +3,7 @@ package com.eleks.academy.pharmagator.entities;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import javax.persistence.*;
 
 @Data
@@ -20,5 +21,11 @@ public class Pharmacy {
     private String name;
 
     private String medicineLinkTemplate;
+
+    public Pharmacy(String name, String medicineLinkTemplate) {
+
+        this.name = name;
+        this.medicineLinkTemplate = medicineLinkTemplate;
+    }
 
 }

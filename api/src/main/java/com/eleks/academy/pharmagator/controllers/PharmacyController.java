@@ -24,7 +24,6 @@ public class PharmacyController {
 
     @GetMapping("/{id:[\\d]+}")
     public ResponseEntity<Pharmacy> getById(@PathVariable Long id) {
-
         return this.pharmacyService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());

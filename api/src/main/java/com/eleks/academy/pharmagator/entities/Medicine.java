@@ -19,6 +19,12 @@ public class Medicine {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String title;
+
+    public Medicine(String title) {
+
+        this.title = title;
+    }
 
 }
