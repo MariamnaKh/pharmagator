@@ -8,17 +8,14 @@ import com.eleks.academy.pharmagator.services.impl.MedicineServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.*;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.server.ResponseStatusException;
-
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -45,55 +42,45 @@ public class MedicineServiceImplTest {
 
     @Test
     public void getAllMedicines() {
-        Medicine medicine1 = new Medicine(1L,"Ibuprofen");
-        Medicine medicine2 = new Medicine(1L,"Ibuprofen");
-        List<Medicine> medicines = Arrays.asList(medicine1,medicine2);
+        Medicine medicine1 = new Medicine(1L, "Ibuprofen");
+        Medicine medicine2 = new Medicine(2L, "Vitamin C");
+        List<Medicine> medicines = Arrays.asList(medicine1, medicine2);
 
         when(medicineRepository.findAll()).thenReturn(medicines);
 
-        List<MedicineDto> medicineDtoList = medicineService.findAll();
+        List<Medicine> medicineList = medicineService.findAll();
 
-        assertEquals(2, medicineDtoList.size());
+        assertEquals(2, medicineList.size());
 
     }
 
     @Test
     public void givenMedicine_CreateNewMedicine() {
-        Medicine medicine = new Medicine(1L,"Ibuprofen");
-        when(medicineRepository.save(any(Medicine.class))).thenReturn(medicine);
-        MedicineDto medicineDto = MedicineDtoMapper.toMedicineDto(medicine);
+        Medicine medicine1 = new Medicine(1L, "Ibuprofen");
+        when(medicineRepository.save(any(Medicine.class))).thenReturn(medicine1);
+        MedicineDto medicineDto = MedicineDtoMapper.toMedicineDto(medicine1);
 
-        MedicineDto savedMedicine = medicineService.createMedicine(medicineDto);
+        Medicine savedMedicine = medicineService.save(medicineDto);
         // then
         verify(medicineRepository, times(1)).save(any(Medicine.class));
-        assertEquals(medicine.getId(), savedMedicine.getId());
-        assertEquals(medicine.getTitle(), savedMedicine.getTitle());
+        assertEquals(medicine1.getId(), savedMedicine.getId());
+        assertEquals(medicine1.getTitle(), savedMedicine.getTitle());
 
     }
 
     @Test
     public void givenMedicine_TestById() {
         //given
-        Medicine medicine = new Medicine(3L,"Valerian root");
+        Medicine medicine = new Medicine(3L, "Valerian root");
         when(medicineRepository.findById(anyLong()))
                 .thenReturn(Optional.of(medicine));
-        MedicineDto medicineDto = medicineService.getById(3L);
+        Medicine medicine2 = medicineService.findById(3L).get();
 
         // then
         verify(medicineRepository, times(1)).findById(anyLong());
-        assertEquals(medicine.getId(), medicineDto.getId());
-        assertEquals(medicine.getTitle(), medicineDto.getTitle());
+        assertEquals(medicine.getId(), medicine2.getId());
+        assertEquals(medicine.getTitle(), medicine2.getTitle());
     }
-
-    @Test
-    public void deleteMethodThrowsResponseStatus(){
-
-        Medicine medicine = new Medicine(1L,"Ibuprofen");
-
-        assertThatThrownBy(() -> medicineService.deleteMedicine(medicine.getId()))
-                .isInstanceOf(ResponseStatusException.class);
-
-    }
-
 
 }
+
