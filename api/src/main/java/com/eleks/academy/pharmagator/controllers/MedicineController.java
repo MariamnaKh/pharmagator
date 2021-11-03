@@ -1,53 +1,54 @@
 package com.eleks.academy.pharmagator.controllers;
 
 import com.eleks.academy.pharmagator.dto.MedicineDto;
-import com.eleks.academy.pharmagator.services.impl.MedicineServiceImpl;
+import com.eleks.academy.pharmagator.entities.Medicine;
+import com.eleks.academy.pharmagator.services.MedicineService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/medicines")
+@RequiredArgsConstructor
 public class MedicineController {
 
-    private final MedicineServiceImpl medicineService;
+    private final MedicineService medicineService;
 
     @GetMapping
-    public List<MedicineDto> getAll() {
+    public List<Medicine> getAll() {
 
-        return medicineService.findAll();
-
+        return this.medicineService.findAll();
     }
 
-    @GetMapping("/{id}")
-    public MedicineDto getById(@PathVariable("id") Long id) {
-
-        return medicineService.getById(id);
-
-    }
-
-    @DeleteMapping("/{id}")
-    public void deleteMedicine(@PathVariable("id") Long id) {
-
-        medicineService.deleteMedicine(id);
-
+    @GetMapping("/{id:[\\d]+}")
+    public ResponseEntity<Medicine> getById(@PathVariable Long id) {
+        return this.medicineService.findById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public MedicineDto createMedicine(@RequestBody MedicineDto medicine) {
-
-        return medicineService.createMedicine(medicine);
-
+    public Medicine create(@Valid @RequestBody MedicineDto medicineDto) {
+        return this.medicineService.save(medicineDto);
     }
 
-    @PutMapping("/{id}")
-    public MedicineDto updateMedicine(@PathVariable("id") Long id,
-                                                   @RequestBody MedicineDto medicine) {
+    @PutMapping("/{id:[\\d]+}")
+    public ResponseEntity<Medicine> update(
+            @PathVariable Long id,
+            @Valid @RequestBody MedicineDto medicineDto) {
 
-        return medicineService.updateMedicine(id, medicine);
+        return this.medicineService.update(id, medicineDto)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 
+    @DeleteMapping("/{id:[\\d]+}")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        this.medicineService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
 }
