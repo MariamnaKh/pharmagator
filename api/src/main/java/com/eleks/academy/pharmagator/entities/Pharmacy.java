@@ -26,7 +26,6 @@ public class Pharmacy {
 
         this.name = name;
         this.medicineLinkTemplate = medicineLinkTemplate;
-
     }
 
 }

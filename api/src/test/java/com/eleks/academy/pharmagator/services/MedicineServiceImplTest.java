@@ -12,14 +12,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -58,8 +56,8 @@ public class MedicineServiceImplTest {
     public void getAllMedicines() {
 
         when(medicineRepository.findAll()).thenReturn(medicines);
-        List<MedicineDto> medicineDtoList = medicineService.findAll();
-        assertEquals(2, medicineDtoList.size());
+        List<Medicine> medicineList = medicineService.findAll();
+        assertEquals(2, medicineList.size());
 
     }
 
@@ -69,7 +67,7 @@ public class MedicineServiceImplTest {
         when(medicineRepository.save(any(Medicine.class))).thenReturn(medicine1);
         MedicineDto medicineDto = MedicineDtoMapper.toMedicineDto(medicine1);
 
-        MedicineDto savedMedicine = medicineService.createMedicine(medicineDto);
+        Medicine savedMedicine = medicineService.save(medicineDto);
         // then
         verify(medicineRepository, times(1)).save(any(Medicine.class));
         assertEquals(medicine1.getId(), savedMedicine.getId());
@@ -79,24 +77,14 @@ public class MedicineServiceImplTest {
 
     @Test
     public void givenMedicine_TestById() {
-        //given
+
         when(medicineRepository.findById(anyLong()))
                 .thenReturn(Optional.of(medicine1));
-        MedicineDto medicineDto = medicineService.getById(3L);
-
+        Medicine medicine2 = medicineService.findById(medicine1.getId()).get();
         // then
         verify(medicineRepository, times(1)).findById(anyLong());
-        assertEquals(medicine1.getId(), medicineDto.getId());
-        assertEquals(medicine1.getTitle(), medicineDto.getTitle());
-
-    }
-
-    @Test
-    public void deleteMethodThrowsResponseStatus() {
-
-        final Long medicineId = 8L;
-        assertThatThrownBy(() -> medicineService.deleteMedicine(medicineId))
-                .isInstanceOf(ResponseStatusException.class);
+        assertEquals(medicine1.getId(), medicine2.getId());
+        assertEquals(medicine1.getTitle(), medicine2.getTitle());
 
     }
 
@@ -105,7 +93,7 @@ public class MedicineServiceImplTest {
 
         when(medicineRepository.findById(anyLong())).thenReturn(Optional.ofNullable(medicine1));
         when(medicineRepository.save(any(Medicine.class))).thenReturn(medicine1);
-        MedicineDto savedMedicine = medicineService.updateMedicine(anyLong(), MedicineDtoMapper.toMedicineDto(medicine1));
+        Medicine savedMedicine = medicineService.update(anyLong(), MedicineDtoMapper.toMedicineDto(medicine1)).get();
         assertThat(savedMedicine.getTitle()).isNotNull();
         assertEquals(medicine1.getTitle(), savedMedicine.getTitle());
 
@@ -114,12 +102,11 @@ public class MedicineServiceImplTest {
     @Test
     public void deleteMedicine() {
 
-        when(medicineRepository.findById(anyLong())).thenReturn(Optional.ofNullable(medicine1));
         doNothing().when(medicineRepository).deleteById(anyLong());
-        medicineService.deleteMedicine(medicine1.getId());
+        medicineService.delete(medicine1.getId());
         verify(medicineRepository, times(1)).deleteById(medicine1.getId());
 
     }
 
-
 }
+

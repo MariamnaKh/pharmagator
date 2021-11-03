@@ -1,6 +1,7 @@
 package com.eleks.academy.pharmagator.controllers;
 
 import com.eleks.academy.pharmagator.dto.MedicineDto;
+import com.eleks.academy.pharmagator.entities.Medicine;
 import com.eleks.academy.pharmagator.services.impl.MedicineServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
@@ -10,17 +11,16 @@ import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.*;
@@ -36,9 +36,9 @@ public class MedicineControllerTest {
 
     @MockBean
     private MedicineServiceImpl medicineService;
-    private MedicineDto medicine;
-    private MedicineDto medicine2;
-    private List<MedicineDto> medicineList;
+    private Medicine medicine;
+    private Medicine medicine2;
+    private List<Medicine> medicineList;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -52,8 +52,8 @@ public class MedicineControllerTest {
     @BeforeEach
     public void setup() {
 
-        medicine = new MedicineDto(8L, "Vitamin C");
-        medicine2 = new MedicineDto(9L, "Vitamin B");
+        medicine = new Medicine(8L, "Vitamin C");
+        medicine2 = new Medicine(9L, "Vitamin B");
         medicineList = Arrays.asList(medicine, medicine2);
 
     }
@@ -70,14 +70,14 @@ public class MedicineControllerTest {
     @Test
     public void postMappingOfMedicine_medicineIsCreated() throws Exception {
 
-        when(medicineService.createMedicine(any(MedicineDto.class))).thenReturn(medicine);
+        when(medicineService.save(any(MedicineDto.class))).thenReturn(medicine);
         mockMvc.perform(post(URI).
                         contentType(MediaType.APPLICATION_JSON).
                         content(objectMapper.writeValueAsString(medicine)))
-                .andExpect(status().isCreated())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(medicine.getId()))
                 .andExpect(jsonPath("$.title").value(medicine.getTitle()));
-        verify(medicineService, times(1)).createMedicine(any(MedicineDto.class));
+        verify(medicineService, times(1)).save(any(MedicineDto.class));
 
     }
 
@@ -95,10 +95,10 @@ public class MedicineControllerTest {
     @Test
     public void DeleteById_ShouldDeleteMedicine() throws Exception {
 
-        doNothing().when(medicineService).deleteMedicine(medicine.getId());
+        doNothing().when(medicineService).delete(medicine.getId());
         mockMvc.perform(delete(URI + "/" + medicine.getId())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk()).
+                .andExpect(MockMvcResultMatchers.status().isNoContent()).
                 andDo(MockMvcResultHandlers.print());
 
     }
@@ -106,7 +106,7 @@ public class MedicineControllerTest {
     @Test
     public void GetMappingOfMedicine_ShouldReturnRespectiveMedicine() throws Exception {
 
-        when(medicineService.getById(medicine.getId())).thenReturn(medicine);
+        when(medicineService.findById(medicine.getId())).thenReturn(Optional.ofNullable(medicine));
         mockMvc.perform(get(URI + "/" + medicine.getId()).
                         contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -117,21 +117,21 @@ public class MedicineControllerTest {
     @Test
     public void putMappingOfMedicine_medicineIsUpdated() throws Exception {
 
-        when(medicineService.updateMedicine(anyLong(), any(MedicineDto.class))).thenReturn(medicine);
+        when(medicineService.update(anyLong(), any(MedicineDto.class))).thenReturn(Optional.ofNullable(medicine));
         mockMvc.perform(put(URI + "/" + medicine.getId()).
                         contentType(MediaType.APPLICATION_JSON).
                         content(objectMapper.writeValueAsString(medicine)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(medicine.getId()))
                 .andExpect(jsonPath("$.title").value(medicine.getTitle()));
-        verify(medicineService, times(1)).updateMedicine(anyLong(), any(MedicineDto.class));
+        verify(medicineService, times(1)).update(anyLong(), any(MedicineDto.class));
 
     }
 
     @Test
     public void testResourceNotFoundException() throws Exception {
 
-        when(medicineService.getById(anyLong())).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
+        when(medicineService.findById(anyLong())).thenReturn(Optional.empty());
         mockMvc.perform(get(URI + "/{id}", 1000L))
                 .andExpect(status().isNotFound())
                 .andDo(MockMvcResultHandlers.print());

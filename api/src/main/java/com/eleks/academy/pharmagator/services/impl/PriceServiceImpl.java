@@ -7,11 +7,8 @@ import com.eleks.academy.pharmagator.entities.PriceId;
 import com.eleks.academy.pharmagator.repositories.PriceRepository;
 import com.eleks.academy.pharmagator.services.PriceService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,53 +19,40 @@ public class PriceServiceImpl implements PriceService {
     private final PriceRepository priceRepository;
 
     @Override
-    public List<PriceDto> getAll() {
-
-        return PriceDtoMapper.toPriceDto(priceRepository.findAll());
-
+    public List<Price> findAll() {
+        return priceRepository.findAll();
     }
 
     @Override
-    public PriceDto getById(Long pharmacyId, Long medicineId) {
-
-        Optional<Price> price = priceRepository.findByPharmacyIdAndMedicineId(pharmacyId, medicineId);
-        if(price.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-        return PriceDtoMapper.toPriceDto(price.get());
-
+    public Optional<Price> findById(Long pharmacyId, Long medicineId) {
+        PriceId priceId = new PriceId(pharmacyId, medicineId);
+        return this.priceRepository.findById(priceId);
     }
 
     @Override
-    public void deletePrice(Long pharmacyId, Long medicineId) {
-
-        Optional<Price> price = priceRepository.findByPharmacyIdAndMedicineId(pharmacyId, medicineId);
-        if(price.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-        priceRepository.deleteById(new PriceId(pharmacyId, medicineId));
-
+    public Price save(PriceDto priceDto) {
+        Price price = PriceDtoMapper.toPriceEntity(priceDto);
+        return priceRepository.save(price);
     }
 
     @Override
-    public PriceDto createPrice(PriceDto price) {
+    public Optional<Price> update(Long pharmacyId, Long medicineId, PriceDto priceDto) {
 
-        return PriceDtoMapper.toPriceDto(priceRepository.save(PriceDtoMapper.toPriceEntity(price)));
+        PriceId priceId = new PriceId(pharmacyId, medicineId);
 
+        return this.priceRepository.findById(priceId)
+                .map(source -> {
+                    Price price = PriceDtoMapper.toPriceEntity(priceDto);
+                    price.setPharmacyId(pharmacyId);
+                    price.setMedicineId(medicineId);
+                    return priceRepository.save(price);
+                });
     }
 
     @Override
-    public PriceDto updatePrice(Long pharmacyId, Long medicineId, PriceDto priceDto) {
-
-        Optional<Price> price = priceRepository.findById(new PriceId(pharmacyId, medicineId));
-        if(price.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-        Price tmp = price.get();
-        tmp.setPrice(priceDto.getPrice());
-        tmp.setUpdatedAt(Instant.now());
-        tmp.setExternalId(priceDto.getExternalId());
-        return PriceDtoMapper.toPriceDto(priceRepository.save(tmp));
-
+    public void deleteById(Long pharmacyId, Long medicineId) {
+        PriceId priceId = new PriceId(pharmacyId, medicineId);
+        priceRepository.deleteById(priceId);
     }
+
 }

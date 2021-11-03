@@ -1,19 +1,21 @@
 package com.eleks.academy.pharmagator.services;
 
 import com.eleks.academy.pharmagator.dto.PriceDto;
+import com.eleks.academy.pharmagator.entities.Price;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PriceService {
 
-    public List<PriceDto> getAll();
+    List<Price> findAll();
 
-    public PriceDto getById(Long pharmacyId, Long medicineId);
+    Optional<Price> findById(Long pharmacyId, Long medicineId);
 
-    public void deletePrice(Long pharmacyId, Long medicineId);
+    Price save(PriceDto priceDto);
 
-    public PriceDto createPrice(PriceDto price);
+    Optional<Price> update(Long pharmacyId, Long medicineId, PriceDto priceDto);
 
-    public PriceDto updatePrice(Long pharmacyId, Long medicineId, PriceDto price);
+    void deleteById(Long pharmacyId, Long medicineId);
 
 }
