@@ -10,7 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PharmacyDto {
-    private Long id;
+
     private String name;
     private String medicineLinkTemplate;
+
 }

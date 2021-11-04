@@ -24,7 +24,6 @@ public class PharmacyDtoMapper {
     public static PharmacyDto toPharmacyDto(Pharmacy pharmacy) {
 
         PharmacyDto pharmacyDto = new PharmacyDto();
-        pharmacyDto.setId(pharmacy.getId());
         pharmacyDto.setName(pharmacy.getName());
         pharmacyDto.setMedicineLinkTemplate(pharmacy.getMedicineLinkTemplate());
         return pharmacyDto;

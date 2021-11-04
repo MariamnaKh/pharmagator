@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MedicineDto {
-    private Long id;
+
     private String title;
+
 }

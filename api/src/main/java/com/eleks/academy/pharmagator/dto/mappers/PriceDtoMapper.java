@@ -28,8 +28,6 @@ public class PriceDtoMapper {
         priceDto.setPrice(price.getPrice());
         priceDto.setExternalId(price.getExternalId());
         priceDto.setUpdatedAt(price.getUpdatedAt());
-        priceDto.setMedicineId(priceDto.getMedicineId());
-        priceDto.setPharmacyId(priceDto.getPharmacyId());
         return priceDto;
 
     }

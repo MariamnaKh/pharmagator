@@ -23,7 +23,6 @@ public class MedicineDtoMapper {
     public static MedicineDto toMedicineDto(Medicine medicine) {
 
         MedicineDto medicineDto = new MedicineDto();
-        medicineDto.setId(medicine.getId());
         medicineDto.setTitle(medicine.getTitle());
         return medicineDto;
 
