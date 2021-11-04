@@ -41,8 +41,6 @@ public class PriceControllerTest {
     private Price price;
     private Price price2;
     private List<Price> priceList;
-    private Medicine medicine;
-    private Pharmacy pharmacy;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -56,8 +54,6 @@ public class PriceControllerTest {
     @BeforeEach
     public void setup() {
 
-        //medicine = medicineRepository.save(new Medicine("Paracetamol");
-        //pharmacy = new Pharmacy("Pharma", "template");
         price = new Price(3L, 5L, new BigDecimal("24"), "1234", Instant.now());
         price2 = new Price(5L, 3L, new BigDecimal("245"), "12345", Instant.now());
         priceList = Arrays.asList(price, price2);
