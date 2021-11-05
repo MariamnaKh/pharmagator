@@ -75,7 +75,6 @@ public class MedicineControllerTest {
                         contentType(MediaType.APPLICATION_JSON).
                         content(objectMapper.writeValueAsString(medicine)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(medicine.getId()))
                 .andExpect(jsonPath("$.title").value(medicine.getTitle()));
         verify(medicineService, times(1)).save(any(MedicineDto.class));
 
@@ -122,7 +121,6 @@ public class MedicineControllerTest {
                         contentType(MediaType.APPLICATION_JSON).
                         content(objectMapper.writeValueAsString(medicine)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(medicine.getId()))
                 .andExpect(jsonPath("$.title").value(medicine.getTitle()));
         verify(medicineService, times(1)).update(anyLong(), any(MedicineDto.class));
 

@@ -74,7 +74,6 @@ public class PharmacyControllerTest {
                         contentType(MediaType.APPLICATION_JSON).
                         content(objectMapper.writeValueAsString(pharmacy)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(pharmacy.getId()))
                 .andExpect(jsonPath("$.name").value(pharmacy.getName()))
                 .andExpect(jsonPath("$.medicineLinkTemplate").value(pharmacy.getMedicineLinkTemplate()));
         verify(pharmacyService, times(1)).save(any(PharmacyDto.class));
@@ -135,7 +134,6 @@ public class PharmacyControllerTest {
                         contentType(MediaType.APPLICATION_JSON).
                         content(objectMapper.writeValueAsString(pharmacy)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(pharmacy.getId()))
                 .andExpect(jsonPath("$.name").value(pharmacy.getName()))
                 .andExpect(jsonPath("$.medicineLinkTemplate").value(pharmacy.getMedicineLinkTemplate()));
         verify(pharmacyService, times(1)).update(anyLong(), any(PharmacyDto.class));
