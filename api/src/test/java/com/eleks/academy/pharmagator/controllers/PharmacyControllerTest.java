@@ -140,4 +140,14 @@ public class PharmacyControllerTest {
 
     }
 
+    @Test
+    public void update_testResourceNotFoundException() throws Exception {
+        when(pharmacyService.update(anyLong(), any(PharmacyDto.class))).thenReturn(Optional.empty());
+        mockMvc.perform(put(URI + "/{id}", pharmacy.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(pharmacy)))
+                .andExpect(status().isNotFound())
+                .andDo(MockMvcResultHandlers.print());
+    }
+
 }

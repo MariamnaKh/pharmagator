@@ -127,13 +127,21 @@ public class MedicineControllerTest {
     }
 
     @Test
-    public void testResourceNotFoundException() throws Exception {
-
+    public void findById_testResourceNotFoundException() throws Exception {
         when(medicineService.findById(anyLong())).thenReturn(Optional.empty());
         mockMvc.perform(get(URI + "/{id}", 1000L))
                 .andExpect(status().isNotFound())
                 .andDo(MockMvcResultHandlers.print());
+    }
 
+    @Test
+    public void update_testResourceNotFoundException() throws Exception {
+        when(medicineService.update(anyLong(), any(MedicineDto.class))).thenReturn(Optional.empty());
+        mockMvc.perform(put(URI + "/{id}", 1000L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(medicine)))
+                .andExpect(status().isNotFound())
+                .andDo(MockMvcResultHandlers.print());
     }
 
 }
