@@ -37,15 +37,6 @@ public class PriceController {
         return ResponseEntity.notFound().build();
     }
 
-    @PostMapping("/pharmacyId/{pharmacyId:[\\d]+}/medicineId/{medicineId:[\\d]+}")
-    public PriceDto create(
-            @Valid @RequestBody PriceDto priceDto,
-            @PathVariable Long pharmacyId,
-            @PathVariable Long medicineId) {
-
-        return PriceDtoMapper.toPriceDto(priceService.save(priceDto, pharmacyId, medicineId));
-    }
-
     @PutMapping("/pharmacyId/{pharmacyId:[\\d]+}/medicineId/{medicineId:[\\d]+}")
     public ResponseEntity<PriceDto> update(
             @Valid @RequestBody PriceDto priceDto,
