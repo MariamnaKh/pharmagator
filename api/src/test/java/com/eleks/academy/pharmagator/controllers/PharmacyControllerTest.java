@@ -74,7 +74,6 @@ public class PharmacyControllerTest {
                         contentType(MediaType.APPLICATION_JSON).
                         content(objectMapper.writeValueAsString(pharmacy)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(pharmacy.getId()))
                 .andExpect(jsonPath("$.name").value(pharmacy.getName()))
                 .andExpect(jsonPath("$.medicineLinkTemplate").value(pharmacy.getMedicineLinkTemplate()));
         verify(pharmacyService, times(1)).save(any(PharmacyDto.class));
@@ -135,11 +134,20 @@ public class PharmacyControllerTest {
                         contentType(MediaType.APPLICATION_JSON).
                         content(objectMapper.writeValueAsString(pharmacy)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(pharmacy.getId()))
                 .andExpect(jsonPath("$.name").value(pharmacy.getName()))
                 .andExpect(jsonPath("$.medicineLinkTemplate").value(pharmacy.getMedicineLinkTemplate()));
         verify(pharmacyService, times(1)).update(anyLong(), any(PharmacyDto.class));
 
+    }
+
+    @Test
+    public void update_testResourceNotFoundException() throws Exception {
+        when(pharmacyService.update(anyLong(), any(PharmacyDto.class))).thenReturn(Optional.empty());
+        mockMvc.perform(put(URI + "/{id}", pharmacy.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(pharmacy)))
+                .andExpect(status().isNotFound())
+                .andDo(MockMvcResultHandlers.print());
     }
 
 }

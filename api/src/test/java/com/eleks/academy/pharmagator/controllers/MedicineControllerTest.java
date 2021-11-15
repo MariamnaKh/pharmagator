@@ -75,7 +75,6 @@ public class MedicineControllerTest {
                         contentType(MediaType.APPLICATION_JSON).
                         content(objectMapper.writeValueAsString(medicine)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(medicine.getId()))
                 .andExpect(jsonPath("$.title").value(medicine.getTitle()));
         verify(medicineService, times(1)).save(any(MedicineDto.class));
 
@@ -122,20 +121,27 @@ public class MedicineControllerTest {
                         contentType(MediaType.APPLICATION_JSON).
                         content(objectMapper.writeValueAsString(medicine)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(medicine.getId()))
                 .andExpect(jsonPath("$.title").value(medicine.getTitle()));
         verify(medicineService, times(1)).update(anyLong(), any(MedicineDto.class));
 
     }
 
     @Test
-    public void testResourceNotFoundException() throws Exception {
-
+    public void findById_testResourceNotFoundException() throws Exception {
         when(medicineService.findById(anyLong())).thenReturn(Optional.empty());
         mockMvc.perform(get(URI + "/{id}", 1000L))
                 .andExpect(status().isNotFound())
                 .andDo(MockMvcResultHandlers.print());
+    }
 
+    @Test
+    public void update_testResourceNotFoundException() throws Exception {
+        when(medicineService.update(anyLong(), any(MedicineDto.class))).thenReturn(Optional.empty());
+        mockMvc.perform(put(URI + "/{id}", 1000L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(medicine)))
+                .andExpect(status().isNotFound())
+                .andDo(MockMvcResultHandlers.print());
     }
 
 }

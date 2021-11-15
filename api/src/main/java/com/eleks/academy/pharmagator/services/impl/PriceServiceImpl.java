@@ -30,12 +30,6 @@ public class PriceServiceImpl implements PriceService {
     }
 
     @Override
-    public Price save(PriceDto priceDto) {
-        Price price = PriceDtoMapper.toPriceEntity(priceDto);
-        return priceRepository.save(price);
-    }
-
-    @Override
     public Optional<Price> update(Long pharmacyId, Long medicineId, PriceDto priceDto) {
 
         PriceId priceId = new PriceId(pharmacyId, medicineId);

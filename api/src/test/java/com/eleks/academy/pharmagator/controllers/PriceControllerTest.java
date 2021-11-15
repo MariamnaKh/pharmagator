@@ -1,8 +1,6 @@
 package com.eleks.academy.pharmagator.controllers;
 
 import com.eleks.academy.pharmagator.dto.PriceDto;
-import com.eleks.academy.pharmagator.entities.Medicine;
-import com.eleks.academy.pharmagator.entities.Pharmacy;
 import com.eleks.academy.pharmagator.entities.Price;
 import com.eleks.academy.pharmagator.services.PriceService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -72,16 +70,15 @@ public class PriceControllerTest {
     @Test
     public void postMappingOfPrice_priceIsCreated() throws Exception {
 
-        when(priceService.save(any(PriceDto.class))).thenReturn(price);
-        mockMvc.perform(post(URI).
+        when(priceService.save(any(PriceDto.class), anyLong(), anyLong())).thenReturn(price);
+        mockMvc.perform(post(URI + "/" + "pharmacyId/{pharmacyId}/medicineId/{medicineId}",
+                        price.getPharmacyId(), price.getMedicineId()).
                         contentType(MediaType.APPLICATION_JSON).
                         content(objectMapper.writeValueAsString(price)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.pharmacyId").value(price.getPharmacyId()))
-                .andExpect(jsonPath("$.medicineId").value(price.getMedicineId()))
                 .andExpect(jsonPath("$.price").value(price.getPrice()))
                 .andExpect(jsonPath("$.externalId").value(price.getExternalId()));
-        verify(priceService, times(1)).save(any(PriceDto.class));
+        verify(priceService, times(1)).save(any(PriceDto.class), anyLong(), anyLong());
 
     }
 
@@ -110,15 +107,24 @@ public class PriceControllerTest {
     }
 
     @Test
-    public void testedResourceNotFoundException() throws Exception {
-
+    public void findById_testedResourceNotFoundException() throws Exception {
         when(priceService.findById(anyLong(), anyLong())).thenReturn(Optional.empty());
 
         mockMvc.perform(get(URI + "/" + "pharmacyId/{pharmacyId}/medicineId/{medicineId}",
                         1234L, 456L))
                 .andExpect(status().isNotFound())
                 .andDo(MockMvcResultHandlers.print());
+    }
 
+    @Test
+    public void update_testResourceNotFoundException() throws Exception {
+        when(priceService.update(anyLong(), anyLong(), any(PriceDto.class))).thenReturn(Optional.empty());
+        mockMvc.perform(put(URI + "/" + "pharmacyId/{pharmacyId}/medicineId/{medicineId}",
+                        price.getPharmacyId(), price.getMedicineId()).
+                        contentType(MediaType.APPLICATION_JSON).
+                        content(objectMapper.writeValueAsString(price)))
+                .andExpect(status().isNotFound())
+                .andDo(MockMvcResultHandlers.print());
     }
 
     @Test
@@ -129,8 +135,6 @@ public class PriceControllerTest {
                         price2.getPharmacyId(), price2.getMedicineId()).
                         contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(jsonPath("$.pharmacyId").value(price2.getPharmacyId()))
-                .andExpect(jsonPath("$.medicineId").value(price2.getMedicineId()))
                 .andExpect(jsonPath("$.price").value(price2.getPrice()))
                 .andExpect(jsonPath("$.externalId").value(price2.getExternalId()));
 
@@ -140,13 +144,11 @@ public class PriceControllerTest {
     public void putMappingOfPrice_priceIsUpdated() throws Exception {
 
         when(priceService.update(anyLong(), anyLong(), any(PriceDto.class))).thenReturn(Optional.ofNullable(price));
-        mockMvc.perform(post(URI + "/" + "pharmacyId/{pharmacyId}/medicineId/{medicineId}",
+        mockMvc.perform(put(URI + "/" + "pharmacyId/{pharmacyId}/medicineId/{medicineId}",
                         price.getPharmacyId(), price.getMedicineId()).
                         contentType(MediaType.APPLICATION_JSON).
                         content(objectMapper.writeValueAsString(price)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.pharmacyId").value(price.getPharmacyId()))
-                .andExpect(jsonPath("$.medicineId").value(price.getMedicineId()))
                 .andExpect(jsonPath("$.price").value(price.getPrice()))
                 .andExpect(jsonPath("$.externalId").value(price.getExternalId()));
         verify(priceService, times(1)).update(anyLong(), anyLong(), any(PriceDto.class));
