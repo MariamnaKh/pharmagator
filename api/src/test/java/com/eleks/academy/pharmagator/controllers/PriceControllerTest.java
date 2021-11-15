@@ -68,21 +68,6 @@ public class PriceControllerTest {
     }
 
     @Test
-    public void postMappingOfPrice_priceIsCreated() throws Exception {
-
-        when(priceService.save(any(PriceDto.class), anyLong(), anyLong())).thenReturn(price);
-        mockMvc.perform(post(URI + "/" + "pharmacyId/{pharmacyId}/medicineId/{medicineId}",
-                        price.getPharmacyId(), price.getMedicineId()).
-                        contentType(MediaType.APPLICATION_JSON).
-                        content(objectMapper.writeValueAsString(price)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.price").value(price.getPrice()))
-                .andExpect(jsonPath("$.externalId").value(price.getExternalId()));
-        verify(priceService, times(1)).save(any(PriceDto.class), anyLong(), anyLong());
-
-    }
-
-    @Test
     public void getAllPrices_returnsPrices() throws Exception {
 
         when(priceService.findAll()).thenReturn(priceList);
