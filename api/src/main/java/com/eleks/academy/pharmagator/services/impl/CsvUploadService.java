@@ -28,43 +28,45 @@ public class CsvUploadService {
     public void save(MultipartFile multipartFile) {
         try {
             List<MedicineDto> list = CsvUtil.parseBeans(multipartFile.getInputStream());
-
-            for (MedicineDto dto : list) {
-                Pharmacy pharmacy = null;
-                Optional<Pharmacy> ifExists = pharmacyRepository.findByName(dto.getPharmacyName());
-
-                if (ifExists.isEmpty()) {
-                    pharmacy = new Pharmacy();
-                    pharmacy.setName(dto.getPharmacyName());
-                    pharmacy.setMedicineLinkTemplate(dto.getExternalId());
-                    pharmacy = pharmacyRepository.save(pharmacy);
-                } else {
-                    pharmacy = ifExists.get();
-                }
-
-                Optional<Medicine> ifMedicineExists = medicineRepository.findByTitle(dto.getTitle());
-                Medicine medicine = null;
-
-                if (ifMedicineExists.isPresent()) {
-                    medicine = ifMedicineExists.get();
-                } else {
-                    Medicine newMedicine = new Medicine();
-                    newMedicine.setTitle(dto.getTitle());
-                    medicine = medicineRepository.save(newMedicine);
-                }
-
-                Price price = new Price();
-                price.setMedicineId(medicine.getId());
-                price.setPharmacyId(pharmacy.getId());
-                price.setExternalId(dto.getExternalId());
-                price.setPrice(dto.getPrice());
-                price.setUpdatedAt(Instant.now());
-                priceRepository.save(price);
-            }
+            storeToDatabase(list);
         } catch (IOException e) {
             throw new IllegalStateException("Unable to read input", e);
         }
     }
 
+    private void storeToDatabase(List<MedicineDto> dtoList) {
+        for (MedicineDto dto : dtoList) {
+            Pharmacy pharmacy = null;
+            Optional<Pharmacy> ifExists = pharmacyRepository.findByName(dto.getPharmacyName());
+
+            if (ifExists.isEmpty()) {
+                pharmacy = new Pharmacy();
+                pharmacy.setName(dto.getPharmacyName());
+                pharmacy.setMedicineLinkTemplate(dto.getExternalId());
+                pharmacy = pharmacyRepository.save(pharmacy);
+            } else {
+                pharmacy = ifExists.get();
+            }
+
+            Optional<Medicine> ifMedicineExists = medicineRepository.findByTitle(dto.getTitle());
+            Medicine medicine = null;
+
+            if (ifMedicineExists.isPresent()) {
+                medicine = ifMedicineExists.get();
+            } else {
+                Medicine newMedicine = new Medicine();
+                newMedicine.setTitle(dto.getTitle());
+                medicine = medicineRepository.save(newMedicine);
+            }
+
+            Price price = new Price();
+            price.setMedicineId(medicine.getId());
+            price.setPharmacyId(pharmacy.getId());
+            price.setExternalId(dto.getExternalId());
+            price.setPrice(dto.getPrice());
+            price.setUpdatedAt(Instant.now());
+            priceRepository.save(price);
+        }
+    }
 
 }
