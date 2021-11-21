@@ -20,7 +20,7 @@ public class CsvController {
     public ResponseEntity<?> upload(@RequestParam("file") MultipartFile multipartFile) {
         if (!multipartFile.isEmpty() && multipartFile.getContentType().contentEquals("text/csv")) {
             csvUploadService.save(multipartFile);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok("File was successfully saved");
         }
         return ResponseEntity.noContent().build();
     }
