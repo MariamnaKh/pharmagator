@@ -29,6 +29,9 @@ public class PharmacyDSDataProvider implements DataProvider {
     @Value("${pharmagator.data-providers.apteka-ds.category-path}")
     private String categoryPath;
 
+    @Value("${pharmagator.data-providers.apteka-ds.pharmacy-name}")
+    private String pharmacyName;
+
     public PharmacyDSDataProvider(@Qualifier("pharmacyDSWebClient") WebClient dsClient) {
 
         this.dsClient = dsClient;
@@ -101,6 +104,7 @@ public class PharmacyDSDataProvider implements DataProvider {
                 .externalId(dsMedicineDto.getId())
                 .price(dsMedicineDto.getPrice())
                 .title(dsMedicineDto.getName())
+                .pharmacyName(pharmacyName)
                 .build();
     }
 
