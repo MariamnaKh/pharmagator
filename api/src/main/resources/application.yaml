@@ -20,4 +20,8 @@ pharmagator:
       url: https://api-int.apteka-ds.com.ua/api/v1
       category-fetch-url: /category-menu
       category-path: /cat-prods-by-page
+      pharmacy-name: apteka-ds
+    med-service:
+      url: https://online-apteka.com.ua/ua/catalog/lekarstvennye-sredstva/
+      pharmacy-name: med-service
 
