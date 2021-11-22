@@ -1,13 +1,10 @@
 package com.eleks.academy.pharmagator.scheduler;
 
 import com.eleks.academy.pharmagator.dataproviders.DataProvider;
-import com.eleks.academy.pharmagator.dataproviders.PharmacyRozetkaDataProvider;
 import com.eleks.academy.pharmagator.dataproviders.dto.MedicineDto;
 import com.eleks.academy.pharmagator.entities.Medicine;
 import com.eleks.academy.pharmagator.entities.Pharmacy;
 import com.eleks.academy.pharmagator.entities.Price;
-import com.eleks.academy.pharmagator.mappers.MedicineMapper;
-import com.eleks.academy.pharmagator.mappers.PriceMapper;
 import com.eleks.academy.pharmagator.repositories.MedicineRepository;
 import com.eleks.academy.pharmagator.repositories.PharmacyRepository;
 import com.eleks.academy.pharmagator.repositories.PriceRepository;
@@ -19,9 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.util.List;
-
 import java.util.Optional;
-
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -33,7 +28,7 @@ public class Scheduler {
     private final List<DataProvider> dataProviderList;
     private final MedicineRepository medicineRepository;
     private final PriceRepository priceRepository;
-    private static final Long ROZETKA = 2L;
+    private final PharmacyRepository pharmacyRepository;
 
     @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.MINUTES)
 
@@ -47,8 +42,21 @@ public class Scheduler {
     private void storeToDatabase(MedicineDto dto) {
         // TODO: convert DTO to Entity and store to database
         log.info(dto.getTitle() + " - " + dto.getPrice());
-        /*Optional<Medicine> ifMedicineExists = medicineRepository.findByTitle(dto.getTitle());
+        Pharmacy pharmacy = null;
+        Optional<Pharmacy> ifExists = pharmacyRepository.findByName(dto.getPharmacyName());
+
+        if (ifExists.isEmpty()) {
+            pharmacy = new Pharmacy();
+            pharmacy.setName(dto.getPharmacyName());
+            pharmacy.setMedicineLinkTemplate(dto.getExternalId());
+            pharmacy = pharmacyRepository.save(pharmacy);
+        } else {
+            pharmacy = ifExists.get();
+        }
+
+        Optional<Medicine> ifMedicineExists = medicineRepository.findByTitle(dto.getTitle());
         Medicine medicine = null;
+
         if (ifMedicineExists.isPresent()) {
             medicine = ifMedicineExists.get();
         } else {
@@ -56,17 +64,14 @@ public class Scheduler {
             newMedicine.setTitle(dto.getTitle());
             medicine = medicineRepository.save(newMedicine);
         }
+
         Price price = new Price();
         price.setMedicineId(medicine.getId());
-        price.setPharmacyId(ROZETKA);
+        price.setPharmacyId(pharmacy.getId());
         price.setExternalId(dto.getExternalId());
         price.setPrice(dto.getPrice());
         price.setUpdatedAt(Instant.now());
-        priceRepository.save(price);*/
-
-        Medicine medicine = MedicineMapper.toMedicineEntity(dto);
-        Price price = PriceMapper.toPriceEntity(dto);
-
+        priceRepository.save(price);
     }
 
 }
