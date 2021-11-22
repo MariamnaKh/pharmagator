@@ -11,12 +11,11 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.HashSet;
 import java.util.stream.Stream;
 
 @Component
 @RequiredArgsConstructor
-public class PharmacyMedServiceDataProvider {
+public class PharmacyMedServiceDataProvider implements DataProvider {
 
     @Value("${pharmagator.data-providers.med-service.url}")
     private String categoryPath;
@@ -24,53 +23,32 @@ public class PharmacyMedServiceDataProvider {
     @Value("${pharmagator.data-providers.med-service.pharmacy-name}")
     private String pharmacyName;
 
-    //private HashSet<String> links;
+    @Override
+    public Stream<MedicineDto> loadData() {
+        Stream<MedicineDto> dtoStream = Stream.of();
+        String path = pharmacyName;
 
+        do {
+            dtoStream = Stream.concat(dtoStream, fetchMedicines(path));
+            path = getPageLinks(path);
+        } while (!path.isEmpty());
 
-//    @Override
-//    public Stream<MedicineDto> loadData() {
-//        Stream<MedicineDto> dtoStream = Stream.of();
-//        String path = pharmacyName;
-//
-//        do {
-//            dtoStream = Stream.concat(dtoStream, fetchMedicines(path));
-//            path = getPageLinks(path);
-//        } while(!path.isEmpty());
-//
-//        return dtoStream;
-//        //getPageLinks(categoryPath);
-//        //return links.stream().flatMap(l -> fetchMedicines(l));
-//    }
-
-    private String getPageLinks(String url) {
-            try {
-                Document document = Jsoup.connect(url).get();
-                Elements otherLinks = document.select("li.bx-pag-next").select("a");
-
-                if(!otherLinks.isEmpty()) {
-                    return otherLinks.attr("abs:href");
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
+        return dtoStream;
     }
 
-//    private void getPageLinks(String url) {
-//        links = new HashSet<String>();
-//        if (!links.contains(url)) {
-//            try {
-//                Document document = Jsoup.connect(url).get();
-//                Elements otherLinks = document.select("li.bx-pag-next").select("a");
-//
-//                if(!otherLinks.isEmpty()) {
-//                    getPageLinks(otherLinks.attr("abs:href"));
-//                }
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
+    private String getPageLinks(String url) {
+        try {
+            Document document = Jsoup.connect(url).get();
+            Elements otherLinks = document.select("li.bx-pag-next").select("a");
+
+            if (!otherLinks.isEmpty()) {
+                return otherLinks.attr("abs:href");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     private Stream<MedicineDto> fetchMedicines(String url) {
         try {
