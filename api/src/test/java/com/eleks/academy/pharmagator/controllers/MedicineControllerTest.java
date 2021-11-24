@@ -27,8 +27,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ActiveProfiles("test")
 @WebMvcTest(controllers = MedicineController.class)
@@ -77,8 +76,9 @@ public class MedicineControllerTest {
     public void getAllProducts_() throws Exception {
         when(medicineService.findAll()).thenReturn(medicineList);
 
-        mockMvc.perform(MockMvcRequestBuilders.get(URI)
-                        .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(MockMvcRequestBuilders.get(URI))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print());
 
         verify(medicineService, times(1)).findAll();
@@ -88,8 +88,7 @@ public class MedicineControllerTest {
     public void DeleteById_ShouldDeleteMedicine() throws Exception {
         doNothing().when(medicineService).delete(medicine.getId());
 
-        mockMvc.perform(delete(URI + "/" + medicine.getId())
-                        .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(delete(URI + "/" + medicine.getId()))
                 .andExpect(MockMvcResultMatchers.status().isNoContent())
                 .andDo(MockMvcResultHandlers.print());
 
@@ -100,9 +99,8 @@ public class MedicineControllerTest {
     public void GetMappingOfMedicine_ShouldReturnRespectiveMedicine() throws Exception {
         when(medicineService.findById(medicine.getId())).thenReturn(Optional.ofNullable(medicine));
 
-        mockMvc.perform(get(URI + "/" + medicine.getId())
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk())
+        mockMvc.perform(get(URI + "/" + medicine.getId()))
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title", equalTo(medicine.getTitle())));
     }
 
