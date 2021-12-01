@@ -1,9 +1,6 @@
 package com.eleks.academy.pharmagator.dataproviders.dto;
 
-<<<<<<< HEAD
 import com.univocity.parsers.annotations.Parsed;
-=======
->>>>>>> fd7dcd3 (no args & all args constructors)
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
