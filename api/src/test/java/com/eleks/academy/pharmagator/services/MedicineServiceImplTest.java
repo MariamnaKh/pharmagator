@@ -3,6 +3,7 @@ package com.eleks.academy.pharmagator.services;
 import com.eleks.academy.pharmagator.dataproviders.dto.input.MedicineDto;
 import com.eleks.academy.pharmagator.entities.Medicine;
 import com.eleks.academy.pharmagator.repositories.MedicineRepository;
+import nl.altindag.log.LogCaptor;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,6 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -89,11 +91,27 @@ class MedicineServiceImplTest {
     }
 
     @Test
-    void deleteById_ok() {
+    void deleteById_isOk() {
+        doNothing().when(repository).deleteById(anyLong());
+
+        medicineService.deleteById(medicine1.getId());
+
+        verify(repository, times(1)).deleteById(medicine1.getId());
+    }
+
+    @Test
+    void deleteById_nonExistingId_throwsException() {
         Long wrongMedicineId = 1000002L;
         String exceptionMessage = String.format("No class %s entity with id %d exists!", Medicine.class.getCanonicalName(), wrongMedicineId);
 
+        LogCaptor logCaptor = LogCaptor.forClass(MedicineServiceImpl.class);
+        logCaptor.setLogLevelToInfo();
+
         doThrow(new EmptyResultDataAccessException(exceptionMessage, 0)).when(repository).deleteById(wrongMedicineId);
+
+        medicineService.deleteById(wrongMedicineId);
+
+        assertThat(logCaptor.getInfoLogs()).containsExactly(exceptionMessage);
 
         Exception exception = assertThrows(EmptyResultDataAccessException.class, () -> {
             repository.deleteById(wrongMedicineId);
