@@ -49,7 +49,7 @@ class MedicineServiceImplTest {
     }
 
     @Test
-    public void getAllMedicines() {
+    void getAllMedicines() {
         when(repository.findAll()).thenReturn(medicines);
 
         List<Medicine> medicineList = medicineService.findAll();
@@ -58,7 +58,7 @@ class MedicineServiceImplTest {
     }
 
     @Test
-    public void givenMedicine_CreateNewMedicine() {
+    void givenMedicine_CreateNewMedicine() {
         when(repository.save(any())).thenReturn(medicine1);
         when(modelMapper.map(eq(medicineDto), any())).thenReturn(medicine1);
 
@@ -68,7 +68,7 @@ class MedicineServiceImplTest {
     }
 
     @Test
-    public void givenMedicine_TestById() {
+    void givenMedicine_TestById() {
         when(repository.findById(anyLong())).thenReturn(Optional.of(medicine1));
 
         Medicine medicine2 = medicineService.findById(medicine1.getId()).get();
@@ -80,7 +80,7 @@ class MedicineServiceImplTest {
     }
 
     @Test
-    public void givenMedicine_UpdateMedicine() {
+    void givenMedicine_UpdateMedicine() {
         when(repository.findById(anyLong())).thenReturn(Optional.ofNullable(medicine1));
         when(repository.save(any(Medicine.class))).thenReturn(medicine1);
         when(modelMapper.map(eq(medicineDto), any())).thenReturn(medicine1);
