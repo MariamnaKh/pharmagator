@@ -59,7 +59,7 @@ class PharmacyServiceImplTest {
     }
 
     @Test
-    void givenPharmacy_CreateNewPharmacy() {
+    void savePharmacy_pharmacyIsCreated() {
         when(repository.save(any())).thenReturn(pharmacy1);
         when(modelMapper.map(eq(pharmacyDto), any())).thenReturn(pharmacy1);
 
@@ -69,7 +69,7 @@ class PharmacyServiceImplTest {
     }
 
     @Test
-    void givenPharmacy_TestById() {
+    void findPharmacyById_shouldReturnRespectivePharmacy() {
         when(repository.findById(anyLong())).thenReturn(Optional.of(pharmacy1));
 
         Pharmacy pharmacy = pharmacyService.findById(pharmacy1.getId()).get();
@@ -81,7 +81,7 @@ class PharmacyServiceImplTest {
     }
 
     @Test
-    void givenPharmacy_UpdatePharmacy() {
+    void updatePharmacyById_pharmacyIsUpdated() {
         when(modelMapper.map(eq(pharmacyDto), any())).thenReturn(pharmacy1);
         when(repository.findById(anyLong())).thenReturn(Optional.ofNullable(pharmacy1));
         when(repository.save(any(Pharmacy.class))).thenReturn(pharmacy1);
