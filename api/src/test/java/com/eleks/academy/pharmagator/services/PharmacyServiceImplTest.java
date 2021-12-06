@@ -99,7 +99,7 @@ class PharmacyServiceImplTest {
     }
 
     @Test
-    void deleteById_nonExistingId_throwsException() {
+    void deleteById_nonExistingId_throwsEmptyResultDataAccessException() {
         Long wrongPharmacyId = 1000002L;
         String exceptionMessage = String.format("No class %s entity with id %d exists!", Pharmacy.class.getCanonicalName(), wrongPharmacyId);
 

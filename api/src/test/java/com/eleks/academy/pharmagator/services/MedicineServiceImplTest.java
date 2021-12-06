@@ -100,7 +100,7 @@ class MedicineServiceImplTest {
     }
 
     @Test
-    void deleteById_nonExistingId_throwsException() {
+    void deleteById_nonExistingId_throwsEmptyResultDataAccessException() {
         Long wrongMedicineId = 1000002L;
         String exceptionMessage = String.format("No class %s entity with id %d exists!", Medicine.class.getCanonicalName(), wrongMedicineId);
 
