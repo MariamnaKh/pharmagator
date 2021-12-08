@@ -1,9 +1,11 @@
 package com.eleks.academy.pharmagator.services.impl;
 
+import com.eleks.academy.pharmagator.constants.ErrorMessage;
 import com.eleks.academy.pharmagator.dataproviders.dto.MedicineDto;
 import com.eleks.academy.pharmagator.entities.Medicine;
 import com.eleks.academy.pharmagator.entities.Pharmacy;
 import com.eleks.academy.pharmagator.entities.Price;
+import com.eleks.academy.pharmagator.exceptions.FileUploadException;
 import com.eleks.academy.pharmagator.repositories.MedicineRepository;
 import com.eleks.academy.pharmagator.repositories.PharmacyRepository;
 import com.eleks.academy.pharmagator.repositories.PriceRepository;
@@ -30,7 +32,7 @@ public class CsvUploadService {
             List<MedicineDto> list = CsvUtil.parseBeans(multipartFile.getInputStream());
             storeToDatabase(list);
         } catch (IOException e) {
-            throw new IllegalStateException("Unable to read input", e);
+            throw new FileUploadException(ErrorMessage.ACCESS_ERROR);
         }
     }
 

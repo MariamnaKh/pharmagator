@@ -1,6 +1,8 @@
 package com.eleks.academy.pharmagator.util;
 
+import com.eleks.academy.pharmagator.constants.ErrorMessage;
 import com.eleks.academy.pharmagator.dataproviders.dto.MedicineDto;
+import com.eleks.academy.pharmagator.exceptions.FileUploadException;
 import com.univocity.parsers.common.processor.BeanListProcessor;
 import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
@@ -30,7 +32,7 @@ public class CsvUtil {
         try {
             return new InputStreamReader(input, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            throw new IllegalStateException("Unable to read input", e);
+            throw new FileUploadException(ErrorMessage.NAMED_CHARSET_NOT_SUPPORTED);
         }
     }
 
