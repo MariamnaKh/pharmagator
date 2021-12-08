@@ -21,8 +21,7 @@ public class Scheduler {
     private final List<DataProvider> dataProviderList;
     private final PersistenceService persistenceService;
 
-
-    @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.MINUTES)
+    @Scheduled(cron = "0 0 12 * * ?")
     public void schedule() {
         log.info("Scheduler started at {}", Instant.now());
         dataProviderList.stream()
