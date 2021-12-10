@@ -1,8 +1,9 @@
 package com.eleks.academy.pharmagator.controllers;
 
+import com.eleks.academy.pharmagator.constants.ErrorMessage;
 import com.eleks.academy.pharmagator.dto.PharmacyDto;
 import com.eleks.academy.pharmagator.dto.mappers.PharmacyDtoMapper;
-import com.eleks.academy.pharmagator.entities.Pharmacy;
+import com.eleks.academy.pharmagator.exceptions.IdentifierNotFoundException;
 import com.eleks.academy.pharmagator.services.PharmacyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,11 +27,9 @@ public class PharmacyController {
 
     @GetMapping("/{id:[\\d]+}")
     public ResponseEntity<PharmacyDto> getById(@PathVariable Long id) {
-        Optional<Pharmacy> byId = pharmacyService.findById(id);
-        if (byId.isPresent()) {
-            return ResponseEntity.ok(PharmacyDtoMapper.toPharmacyDto(byId.get()));
-        }
-        return ResponseEntity.notFound().build();
+        return pharmacyService.findById(id)
+                .map(pharmacy -> ResponseEntity.ok(PharmacyDtoMapper.toPharmacyDto(pharmacy)))
+                .orElseThrow(() -> new IdentifierNotFoundException(String.format(ErrorMessage.PHARMACY_NOT_FOUND_BY_ID, id)));
     }
 
     @PostMapping
@@ -44,11 +42,9 @@ public class PharmacyController {
             @PathVariable Long id,
             @Valid @RequestBody PharmacyDto pharmacyDto) {
 
-        Optional<Pharmacy> update = pharmacyService.update(id, pharmacyDto);
-        if (update.isPresent()) {
-            return ResponseEntity.ok(PharmacyDtoMapper.toPharmacyDto(update.get()));
-        }
-        return ResponseEntity.notFound().build();
+        return pharmacyService.update(id, pharmacyDto)
+                .map(pharmacy -> ResponseEntity.ok(PharmacyDtoMapper.toPharmacyDto(pharmacy)))
+                .orElseThrow(() -> new IdentifierNotFoundException(String.format(ErrorMessage.PHARMACY_NOT_FOUND_BY_ID, id)));
     }
 
     @DeleteMapping("/{id:[\\d]+}")

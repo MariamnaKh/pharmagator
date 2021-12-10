@@ -1,8 +1,9 @@
 package com.eleks.academy.pharmagator.controllers;
 
+import com.eleks.academy.pharmagator.constants.ErrorMessage;
 import com.eleks.academy.pharmagator.dto.MedicineDto;
 import com.eleks.academy.pharmagator.dto.mappers.MedicineDtoMapper;
-import com.eleks.academy.pharmagator.entities.Medicine;
+import com.eleks.academy.pharmagator.exceptions.IdentifierNotFoundException;
 import com.eleks.academy.pharmagator.services.MedicineService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/medicines")
@@ -27,11 +27,9 @@ public class MedicineController {
 
     @GetMapping("/{id:[\\d]+}")
     public ResponseEntity<MedicineDto> getById(@PathVariable Long id) {
-        Optional<Medicine> byId = medicineService.findById(id);
-        if (byId.isPresent()) {
-            return ResponseEntity.ok(MedicineDtoMapper.toMedicineDto(byId.get()));
-        }
-        return ResponseEntity.notFound().build();
+        return medicineService.findById(id)
+                .map(medicine -> ResponseEntity.ok(MedicineDtoMapper.toMedicineDto(medicine)))
+                .orElseThrow(() -> new IdentifierNotFoundException(String.format(ErrorMessage.MEDICINE_NOT_FOUND_BY_ID, id)));
     }
 
     @PostMapping
@@ -44,11 +42,9 @@ public class MedicineController {
             @PathVariable Long id,
             @Valid @RequestBody MedicineDto medicineDto) {
 
-        Optional<Medicine> update = medicineService.update(id, medicineDto);
-        if (update.isPresent()) {
-            return ResponseEntity.ok(MedicineDtoMapper.toMedicineDto(update.get()));
-        }
-        return ResponseEntity.notFound().build();
+        return medicineService.update(id, medicineDto)
+                .map(medicine -> ResponseEntity.ok(MedicineDtoMapper.toMedicineDto(medicine)))
+                .orElseThrow(() -> new IdentifierNotFoundException(String.format(ErrorMessage.MEDICINE_NOT_FOUND_BY_ID, id)));
     }
 
     @DeleteMapping("/{id:[\\d]+}")

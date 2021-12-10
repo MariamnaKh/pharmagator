@@ -9,4 +9,3 @@ public interface MedicinePrice {
     BigDecimal getPrice();
 
 }
-
