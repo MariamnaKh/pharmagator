@@ -1,8 +1,9 @@
 package com.eleks.academy.pharmagator.controllers;
 
+import com.eleks.academy.pharmagator.constants.ErrorMessage;
 import com.eleks.academy.pharmagator.dto.PriceDto;
 import com.eleks.academy.pharmagator.dto.mappers.PriceDtoMapper;
-import com.eleks.academy.pharmagator.entities.Price;
+import com.eleks.academy.pharmagator.exceptions.IdentifierNotFoundException;
 import com.eleks.academy.pharmagator.services.PriceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/prices")
@@ -30,11 +30,9 @@ public class PriceController {
             @PathVariable Long pharmacyId,
             @PathVariable Long medicineId) {
 
-        Optional<Price> byId = priceService.findById(pharmacyId, medicineId);
-        if (byId.isPresent()) {
-            return ResponseEntity.ok(PriceDtoMapper.toPriceDto(byId.get()));
-        }
-        return ResponseEntity.notFound().build();
+        return priceService.findById(pharmacyId, medicineId)
+                .map(price -> ResponseEntity.ok(PriceDtoMapper.toPriceDto(price)))
+                .orElseThrow(() -> new IdentifierNotFoundException(ErrorMessage.PRICE_NOT_FOUND_BY_ID));
     }
 
     @PutMapping("/pharmacyId/{pharmacyId:[\\d]+}/medicineId/{medicineId:[\\d]+}")
@@ -43,11 +41,9 @@ public class PriceController {
             @PathVariable Long pharmacyId,
             @PathVariable Long medicineId) {
 
-        Optional<Price> update = priceService.update(pharmacyId, medicineId, priceDto);
-        if (update.isPresent()) {
-            return ResponseEntity.ok(PriceDtoMapper.toPriceDto(update.get()));
-        }
-        return ResponseEntity.notFound().build();
+        return priceService.update(pharmacyId, medicineId, priceDto)
+                .map(price -> ResponseEntity.ok(PriceDtoMapper.toPriceDto(price)))
+                .orElseThrow(() -> new IdentifierNotFoundException(ErrorMessage.PRICE_NOT_FOUND_BY_ID));
     }
 
     @DeleteMapping("/pharmacyId/{pharmacyId:[\\d]+}/medicineId/{medicineId:[\\d]+}")
