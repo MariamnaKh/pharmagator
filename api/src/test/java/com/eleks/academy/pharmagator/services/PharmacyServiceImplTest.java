@@ -3,7 +3,6 @@ package com.eleks.academy.pharmagator.services;
 import com.eleks.academy.pharmagator.dataproviders.dto.input.PharmacyDto;
 import com.eleks.academy.pharmagator.entities.Pharmacy;
 import com.eleks.academy.pharmagator.repositories.PharmacyRepository;
-import nl.altindag.log.LogCaptor;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +17,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -103,14 +101,7 @@ class PharmacyServiceImplTest {
         Long wrongPharmacyId = 1000002L;
         String exceptionMessage = String.format("No class %s entity with id %d exists!", Pharmacy.class.getCanonicalName(), wrongPharmacyId);
 
-        LogCaptor logCaptor = LogCaptor.forClass(PharmacyServiceImpl.class);
-        logCaptor.setLogLevelToInfo();
-
         doThrow(new EmptyResultDataAccessException(exceptionMessage, 0)).when(repository).deleteById(wrongPharmacyId);
-
-        pharmacyService.deleteById(wrongPharmacyId);
-
-        assertThat(logCaptor.getInfoLogs()).containsExactly(exceptionMessage);
 
         Exception exception = assertThrows(EmptyResultDataAccessException.class, () -> {
             repository.deleteById(wrongPharmacyId);
