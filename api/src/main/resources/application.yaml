@@ -14,10 +14,19 @@ pharmagator:
       url: https://xl-catalog-api.rozetka.com.ua/v4/goods
       medicines-fetch-url: /getDetails
       ids-fetch-url: /get
-      category-id: 4628621
+      category-id: 4628712
       sell-status: available
+      pharmacy-name: pharmacy-rozetka
+      page-limit: 5
     apteka-ds:
       url: https://api-int.apteka-ds.com.ua/api/v1
       category-fetch-url: /category-menu
       category-path: /cat-prods-by-page
+      pharmacy-name: apteka-ds
+      page-limit: 1
+      products-per-page-limit: 50
+    med-service:
+      url: https://online-apteka.com.ua/ua/catalog/lekarstvennye-sredstva/
+      pharmacy-name: med-service
+      page-limit: 5
 

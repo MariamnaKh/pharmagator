@@ -10,7 +10,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -31,6 +34,15 @@ public class PharmacyRozetkaDataProvider implements DataProvider {
     @Value("${pharmagator.data-providers.apteka-rozetka.sell-status}")
     private String sellStatus;
 
+    @Value("${pharmagator.data-providers.apteka-rozetka.medicines-fetch-url}")
+    private String productsPath;
+
+    @Value("${pharmagator.data-providers.apteka-rozetka.pharmacy-name}")
+    private String pharmacyName;
+
+    @Value("${pharmagator.data-providers.apteka-rozetka.page-limit}")
+    private Long pageLimit;
+
     public PharmacyRozetkaDataProvider(@Qualifier("pharmacyRozetkaWebClient") WebClient rozetkaWebClient) {
 
         this.rozetkaWebClient = rozetkaWebClient;
@@ -39,24 +51,16 @@ public class PharmacyRozetkaDataProvider implements DataProvider {
 
     @Override
     public Stream<MedicineDto> loadData() {
-
-        RozetkaIdsResponseData rozetkaResponse;
-        Stream<MedicineDto> medicineDto = Stream.of();
-        int page = 1;
-
-        do {
-            rozetkaResponse = this.fetchMedicineIds(page);
-            medicineDto = Stream.concat(medicineDto, this.fetchMedicines(rozetkaResponse.getIds()));
-            page++;
-
-        } while (rozetkaResponse.getShowNext() != 0);
-
-        return medicineDto;
-
+        return Stream.iterate(1, page -> page + 1)
+                .limit(pageLimit)
+                .map(this::fetchMedicineIds)
+                .flatMap(Optional::stream)
+                .takeWhile(response -> response.getShowNext() != 0)
+                .map(RozetkaIdsResponseData::getIds)
+                .flatMap(this::fetchMedicines);
     }
 
     private Stream<MedicineDto> fetchMedicines(List<Long> ids) {
-
         String idsString = ids.stream()
                 .map(n -> n.toString())
                 .collect(Collectors.joining(","));
@@ -68,16 +72,14 @@ public class PharmacyRozetkaDataProvider implements DataProvider {
                 .retrieve()
                 .bodyToMono(RozetkaMedicinesResponse.class)
                 .block();
-        if (rozetkaMedicinesResponse != null) {
-            return rozetkaMedicinesResponse.getData().stream()
-                    .map(this::mapToMedicineDto);
-        }
-        return Stream.empty();
 
+        return Optional.ofNullable(rozetkaMedicinesResponse).map(RozetkaMedicinesResponse::getData).stream()
+                .flatMap(Collection::stream)
+                .filter(rozetkaMedicineDto -> Objects.nonNull(rozetkaMedicineDto.getId()) && Objects.nonNull(rozetkaMedicineDto.getTitle()))
+                .map(this::mapToMedicineDto);
     }
 
-    private RozetkaIdsResponseData fetchMedicineIds(int page) {
-
+    private Optional<RozetkaIdsResponseData> fetchMedicineIds(int page) {
         RozetkaIdsResponse rozetkaIdsResponse = this.rozetkaWebClient.get().
                 uri(uriBuilder -> uriBuilder.path(idsFetchUrl)
                         .queryParam("category_id", categoryId)
@@ -87,18 +89,17 @@ public class PharmacyRozetkaDataProvider implements DataProvider {
                 .retrieve()
                 .bodyToMono(RozetkaIdsResponse.class)
                 .block();
-        return rozetkaIdsResponse.getData();
-
+        return Optional.ofNullable(rozetkaIdsResponse)
+                .map(RozetkaIdsResponse::getData);
     }
 
     private MedicineDto mapToMedicineDto(RozetkaMedicineDto rozetkaMedicineDto) {
-
         return MedicineDto.builder()
                 .externalId(rozetkaMedicineDto.getId().toString())
                 .price(rozetkaMedicineDto.getPrice())
                 .title(rozetkaMedicineDto.getTitle())
+                .pharmacyName(pharmacyName)
                 .build();
-
     }
 
 }
