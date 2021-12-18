@@ -28,7 +28,7 @@ public class Scheduler {
                 .flatMap(DataProvider::loadData)
                 .forEach(persistenceService::storeToDB);
         log.info("Scheduler finished at {}", Instant.now());
-        dataProviderList.stream().flatMap(DataProvider::loadData).forEach(this::storeToDatabase);
+        dataProviderList.stream().flatMap(DataProvider::loadData).forEach(persistenceService::storeToDB);
     }
 
 }
